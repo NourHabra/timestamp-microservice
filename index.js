@@ -13,38 +13,19 @@ app.get("/", function (req, res) {
 	res.json({ greeting: "hello API" });
 });
 
-// TODO
-// - Handle timestamp and date parameters
-
-app.get("/api/:date", (req, res) => {
-	let date;
-
-	if (req.params.date[4] == "-") date = new Date(req.params.date);
-	else date = new Date(req.params.date / 1000);
+app.get("/api/:date?", (req, res) => {
+	const date = new Date(
+		parseInt(req.params.date * 1, 10) || req.params.date || Date.now()
+	);
 
 	if (date.toString() == "Invalid Date") res.json({ error: "Invalid Date" });
-
-	let utc = date.toUTCString();
-	let unix = date.getTime() * 1000;
-
-	res.json({
-		unix: unix,
-		utc: utc,
-	});
-});
-
-app.get("/api", (req, res) => {
-	let date = new Date();
-
-	let utc = date.toUTCString();
-	let unix = date.getTime() * 1000;
-
-	res.json({
-		unix: unix,
-		utc: utc,
-	});
+	else
+		res.json({
+			unix: date.getTime(),
+			utc: date.toUTCString(),
+		});
 });
 
 app.listen(PORT, () => {
-	console.log(`Your app is listening on http://localhost:${PORT}`);
+	console.log(`Your app is listening on port ${PORT}`);
 });
